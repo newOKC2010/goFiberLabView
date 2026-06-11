@@ -3,7 +3,7 @@ package cors
 import (
 	"strings"
 
-	loadenv "go-fiber-ecobase/src/loadenv"
+	loadenv "view_lab/src/loadenv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
