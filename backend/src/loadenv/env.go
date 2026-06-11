@@ -3,6 +3,8 @@ package loadEnv
 import (
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -53,4 +55,17 @@ func LoadCreateModel() string {
 		panic(err)
 	}
 	return os.Getenv("CREATE_MODEL")
+}
+
+func LoadCORS() CORS {
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
+	credentials, _ := strconv.ParseBool(os.Getenv("CORS_CREDENTIALS"))
+	return CORS{
+		Origins:     strings.Split(os.Getenv("CORS_ORIGINS"), ","),
+		Credentials: credentials,
+		Methods:     strings.Split(os.Getenv("CORS_METHODS"), ","),
+		Headers:     strings.Split(os.Getenv("CORS_HEADERS"), ","),
+	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	cors "view_lab/src/controllers/cors"
 	conn "view_lab/src/database/connection"
 	loadenv "view_lab/src/loadenv"
 
@@ -18,7 +19,7 @@ func main() {
 	conn.ConnectDB()
 
 	app := fiber.New()
-	// cors.CorsConfig(app)
+	cors.CorsConfig(app)
 
 	log.Printf("Server started on port: %s", port)
 
