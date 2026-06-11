@@ -20,8 +20,8 @@ func CreateOTPEmailHTML(otpCode, fullName string) string {
         
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #43a047 0%%, #2e7d32 100%%); padding: 30px; text-align: center;">
-            <h1 style="margin: 0; color: white; font-size: 24px;">🌿 ระบบลงข้อมูลทรัพยากร</h1>
-            <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">Ecobase System</p>
+            <h1 style="margin: 0; color: white; font-size: 24px;">🔬 ระบบดูผล Lab ของผู้ป่วย</h1>
+            <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">View Lab System</p>
         </div>
         
         <!-- Body -->
@@ -29,7 +29,7 @@ func CreateOTPEmailHTML(otpCode, fullName string) string {
             <p style="margin: 0 0 20px 0; color: #333; font-size: 16px;">สวัสดีคุณ <strong>%s</strong></p>
             
             <p style="margin: 0 0 30px 0; color: #666; font-size: 14px; line-height: 1.6;">
-                คุณได้ทำการร้องขอรหัส OTP สำหรับเข้าใช้งานระบบลงข้อมูลทรัพยากร<br>
+                คุณได้ทำการร้องขอรหัส OTP สำหรับการเข้ามาดูผล Lab ของผู้ป่วย<br>
                 กรุณาใช้รหัสด้านล่างเพื่อยืนยันตัวตนและเข้าสู่ระบบ
             </p>
             
@@ -61,7 +61,7 @@ func CreateOTPEmailHTML(otpCode, fullName string) string {
         <!-- Footer -->
         <div style="background: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
             <p style="margin: 0; color: #6c757d; font-size: 12px;">
-                © 2025 ระบบลงข้อมูลทรัพยากร<br>
+                © 2025 ระบบดูผล Lab ของผู้ป่วย<br>
                 โรงพยาบาล | ระบบอัตโนมัติ - กรุณาอย่าตอบกลับอีเมลนี้
             </p>
         </div>

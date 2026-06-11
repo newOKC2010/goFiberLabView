@@ -13,7 +13,7 @@ func CreateOTPFlexMessage(otpCode, fullName string) mophAlertUtils.FlexMessage {
 	currentTime := time.Now().In(loc).Format("02/01/2006 15:04:05")
 	return mophAlertUtils.FlexMessage{
 		Type:    "flex",
-		AltText: "รหัส OTP สำหรับเข้าใช้งานระบบลงข้อมูลทรัพยากร",
+		AltText: "รหัส OTP สำหรับการเข้ามาดูผล Lab ของผู้ป่วย",
 		Contents: mophAlertUtils.FlexBubble{
 			Type: "bubble",
 			Header: &mophAlertUtils.FlexBox{
@@ -22,7 +22,7 @@ func CreateOTPFlexMessage(otpCode, fullName string) mophAlertUtils.FlexMessage {
 				Contents: []interface{}{
 					mophAlertUtils.FlexText{
 						Type:   "text",
-						Text:   "🌿 ระบบลงข้อมูลทรัพยากร",
+						Text:   "🔬 ระบบดูผล Lab ของผู้ป่วย",
 						Weight: "bold",
 						Size:   "md",
 						Color:  "#6ee778ff",
