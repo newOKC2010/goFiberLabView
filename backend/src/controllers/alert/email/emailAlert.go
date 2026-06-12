@@ -33,7 +33,7 @@ func SendEmailSMTP(to, subject, body string) error {
 }
 
 func SendOTPEmail(to, otpCode, fullName string) error {
-	subject := "� รหัส OTP สำหรับเข้าใช้งานระบบตรวจสอบรถพยาบาล"
+	subject := "� รหัส OTP สำหรับเข้าใช้งานระบบดูผล lab"
 	body := handlerEmailAlert.CreateOTPEmailHTML(otpCode, fullName)
 	return SendEmailSMTP(to, subject, body)
 }

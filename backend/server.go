@@ -24,9 +24,8 @@ func main() {
 
 	log.Printf("Server started on port: %s", port)
 
+	routes.SetupProviderRoutes(app)
 	routes.SetupAuthRoutes(app, conn.DB)
-	// routes.SetupEcobaseRoutes(app, conn.Db)
-	// routes.SetupDashboardRoutes(app, conn.Db)
 
 	if err := app.Listen(":" + port); err != nil {
 		log.Fatal(err)

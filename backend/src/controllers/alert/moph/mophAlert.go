@@ -35,7 +35,12 @@ func SendAlert(payload mophAlertUtils.FlexAlertPayload) mophAlertUtils.AlertResp
 		return returnError("ส่งแจ้งเตือนไม่สำเร็จ", 500)
 	}
 
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
+	method := env.Method
+	if method == "" {
+		method = "POST"
+	}
+
+	req, err := http.NewRequest(method, apiURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Printf("❌ Request error: %v", err)
 		return returnError("ส่งแจ้งเตือนไม่สำเร็จ", 500)

@@ -6,6 +6,7 @@ import (
 
 	loginMain "view_lab/src/controllers/auth/login/otp"
 	provider "view_lab/src/controllers/auth/login/provider"
+	registerMain "view_lab/src/controllers/auth/register"
 	middleware "view_lab/src/middleware"
 	ratelimit "view_lab/src/middleware/rateLimit"
 
@@ -24,6 +25,7 @@ func SetupAuthRoutes(app fiber.Router, db *sql.DB) {
 
 	prefix.Post("/req", ratelimit.RateLimitByEmail(10, 10*time.Minute), loginMain.RequestOTP(db))
 	prefix.Post("/verify", ratelimit.RateLimitByEmail(10, 10*time.Minute), loginMain.VerifyOTP(db))
+	prefix.Post("/register", ratelimit.RateLimitByIP(5, 10*time.Minute), registerMain.Register(db))
 	prefix.Get("/status", middleware.AuthGuards(db, nil), func(c *fiber.Ctx) error {
 		user := c.Locals("user_view_lab").(*middleware.UserViewLabInfo)
 		return c.JSON(struct {

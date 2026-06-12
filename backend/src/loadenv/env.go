@@ -31,8 +31,9 @@ func LoadMOPHAlert() MOPHAlertConfig {
 	}
 	return MOPHAlertConfig{
 		URL:       os.Getenv("MOPH_ALERT_URL"),
-		ClientID:  os.Getenv("MOPH_CLIENT_ID"),
-		SecretKey: os.Getenv("MOPH_SECRET_KEY"),
+		Method:    os.Getenv("MOPH_ALERT_METHOD"),
+		ClientID:  os.Getenv("MOPH_ALERT_CLIENT_ID"),
+		SecretKey: os.Getenv("MOPH_ALERT_SECRET_KEY"),
 	}
 }
 

@@ -7,6 +7,7 @@ type EmailConfig struct {
 
 type MOPHAlertConfig struct {
 	URL       string
+	Method    string
 	ClientID  string
 	SecretKey string
 }
