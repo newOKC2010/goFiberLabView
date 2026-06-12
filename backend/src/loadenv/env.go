@@ -80,6 +80,13 @@ func LoadJWT() JWT {
 	}
 }
 
+func LoadOTPExpiresIn() string {
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
+	return os.Getenv("OTP_EXPIRES_IN")
+}
+
 func LoadOauth() LoadOauthConfig {
 	godotenv.Load()
 	return LoadOauthConfig{
