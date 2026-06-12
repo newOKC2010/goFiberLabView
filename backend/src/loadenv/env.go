@@ -79,3 +79,23 @@ func LoadJWT() JWT {
 		ExpireIn: os.Getenv("JWT_EXPIRES_IN"),
 	}
 }
+
+func LoadOauth() LoadOauthConfig {
+	godotenv.Load()
+	return LoadOauthConfig{
+		HealthID: HealthIDConfig{
+			BaseURL:      os.Getenv("HEALTH_ID_URL"),
+			ClientID:     os.Getenv("HEALTH_ID_CLIENT_ID"),
+			ClientSecret: os.Getenv("HEALTH_ID_CLIENT_SECRET"),
+		},
+		ProviderID: ProviderIDConfig{
+			BaseURL:      os.Getenv("PROVIDER_ID_URL"),
+			ClientID:     os.Getenv("PROVIDER_ID_CLIENT_ID"),
+			ClientSecret: os.Getenv("PROVIDER_ID_CLIENT_SECRET"),
+		},
+		Redirect: RedirectConfig{
+			CallbackURL: os.Getenv("CALL_BACK_URL"),
+		},
+		FrontendURL: os.Getenv("FRONTEND_URL"),
+	}
+}
