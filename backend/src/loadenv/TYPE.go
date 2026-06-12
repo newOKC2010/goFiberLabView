@@ -17,3 +17,8 @@ type CORS struct {
 	Methods     []string
 	Headers     []string
 }
+
+type JWT struct {
+	Secret   string
+	ExpireIn string
+}

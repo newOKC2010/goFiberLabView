@@ -69,3 +69,13 @@ func LoadCORS() CORS {
 		Headers:     strings.Split(os.Getenv("CORS_HEADERS"), ","),
 	}
 }
+
+func LoadJWT() JWT {
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
+	return JWT{
+		Secret:   os.Getenv("JWT_SECRET"),
+		ExpireIn: os.Getenv("JWT_EXPIRES_IN"),
+	}
+}
