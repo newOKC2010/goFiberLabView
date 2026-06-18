@@ -20,9 +20,9 @@ func CreateTables(db *sql.DB) error {
 		facility_code VARCHAR(20), -- รหัสสถานบริการ
 		facility_name VARCHAR(255), -- ชื่อสถานบริการ
 		otp_code VARCHAR(10),
-		otp_expires_at TIMESTAMP,
-		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		otp_expires_at TIMESTAMPTZ,
+		created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);
 
 	-- Table: tokens_view_lab
@@ -30,8 +30,8 @@ func CreateTables(db *sql.DB) error {
 		id BIGSERIAL PRIMARY KEY,
 		user_view_lab_id BIGINT NOT NULL UNIQUE,
 		token TEXT NOT NULL,
-		expires_at TIMESTAMP NOT NULL,
-		login_last TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		expires_at TIMESTAMPTZ NOT NULL,
+		login_last TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY (user_view_lab_id) REFERENCES user_view_lab(id) ON DELETE CASCADE
 	);
 

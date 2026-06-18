@@ -30,7 +30,7 @@ func authVerify(c *fiber.Ctx, db *sql.DB, allowedRoles []string) Response {
 
 	claims, err := validateJWT(token)
 	if err != nil {
-		return Response{Success: false, Message: "token ไม่ถูกต้อง"}
+		return Response{Success: false, Message: "token ไม่ถูกต้องหรือหมดอายุ"}
 	}
 
 	if err := VerifyToken(db, claims.UserViewLabID, token); err != nil {
