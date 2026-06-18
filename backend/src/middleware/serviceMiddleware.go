@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
 	"time"
 
 	modelAuth "view_lab/src/database/models/auth"
@@ -15,8 +17,13 @@ func VerifyToken(db *sql.DB, userID int64, token string) error {
 		userID, token, time.Now(),
 	).Scan(&exists)
 
-	if err != nil || !exists {
+	if err != nil {
+		log.Printf("⚠️ VerifyToken DB error userID=%d: %v", userID, err)
 		return err
+	}
+	if !exists {
+		log.Printf("⚠️ VerifyToken: token ไม่พบใน DB หรือหมดอายุ userID=%d", userID)
+		return fmt.Errorf("token ไม่ถูกต้องหรือหมดอายุ")
 	}
 	return nil
 }

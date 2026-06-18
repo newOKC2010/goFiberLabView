@@ -94,21 +94,21 @@ func Register(db *sql.DB) fiber.Handler {
 		}
 
 		// ตรวจสอบว่ามี admin ในระบบหรือไม่
-		// admins, err := serviceRegister.GetAdmins()
-		// if err != nil {
-		// 	log.Printf("❌ GetAdmins error: %v", err)
-		// 	return c.Status(500).JSON(registerUtils.RegisterResponse{
-		// 		Success: false,
-		// 		Message: "เกิดข้อผิดพลาดในการตรวจสอบข้อมูล",
-		// 	})
-		// }
-		// if len(admins) == 0 {
-		// 	log.Printf("⚠️ พยายามลงทะเบียน แต่ระบบยังไม่มี admin")
-		// 	return c.Status(403).JSON(registerUtils.RegisterResponse{
-		// 		Success: false,
-		// 		Message: "ระบบยังไม่มี Admin หรือ Super Admin ยังไม่สามารถลงทะเบียนได้ กรุณาติดต่อผู้ดูแลระบบ",
-		// 	})
-		// }
+		admins, err := serviceRegister.GetAdmins()
+		if err != nil {
+			log.Printf("❌ GetAdmins error: %v", err)
+			return c.Status(500).JSON(registerUtils.RegisterResponse{
+				Success: false,
+				Message: "เกิดข้อผิดพลาดในการตรวจสอบข้อมูล",
+			})
+		}
+		if len(admins) == 0 {
+			log.Printf("⚠️ พยายามลงทะเบียน แต่ระบบยังไม่มี admin")
+			return c.Status(403).JSON(registerUtils.RegisterResponse{
+				Success: false,
+				Message: "ระบบยังไม่มี Admin หรือ Super Admin ยังไม่สามารถลงทะเบียนได้ กรุณาติดต่อผู้ดูแลระบบ",
+			})
+		}
 
 		user, err := serviceRegister.CreateUser(req.CID, req.FullName, req.Email, req.FacilityType, req.FacilityCode, req.FacilityName)
 		if err != nil {
@@ -122,10 +122,10 @@ func Register(db *sql.DB) fiber.Handler {
 		log.Printf("✅ ลงทะเบียนสำเร็จ: %s - %s", user.CID, user.FullName)
 
 		// ส่งแจ้งเตือนไบยัง admin
-		// go func() {
-		// 	handlerRegister.NotifyAdminsNewRegistration(admins, user)
-		// 	log.Printf("📤 ส่งแจ้งเตือนไปยัง %d admin(s)", len(admins))
-		// }()
+		go func() {
+			handlerRegister.NotifyAdminsNewRegistration(admins, user)
+			log.Printf("📤 ส่งแจ้งเตือนไปยัง %d admin(s)", len(admins))
+		}()
 
 		return c.Status(201).JSON(registerUtils.RegisterResponse{
 			Success: true,

@@ -26,6 +26,7 @@ func main() {
 
 	routes.SetupProviderRoutes(app)
 	routes.SetupAuthRoutes(app, conn.DB)
+	routes.SetupUserRoutes(app, conn.DB)
 
 	if err := app.Listen(":" + port); err != nil {
 		log.Fatal(err)
