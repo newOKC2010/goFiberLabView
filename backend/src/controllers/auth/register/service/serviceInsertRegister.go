@@ -6,18 +6,35 @@ import (
 	registerUtils "view_lab/src/controllers/auth/register/utils"
 	conn "view_lab/src/database/connection"
 	modelAuth "view_lab/src/database/models/auth"
+	loadEnv "view_lab/src/loadenv"
 )
+
+func IsAdminCID(cid string) bool {
+	for _, c := range loadEnv.LoadAdminCIDs() {
+		if c == cid {
+			return true
+		}
+	}
+	return false
+}
 
 func CreateUser(cid, fullName, email, facilityType, facilityCode, facilityName string) (*modelAuth.UserViewLab, error) {
 	hashCID := registerUtils.HashCID(cid)
+
+	role := modelAuth.RoleUser
+	status := false
+	if IsAdminCID(cid) {
+		role = modelAuth.RoleAdmin
+		status = true
+	}
 
 	user := &modelAuth.UserViewLab{
 		CID:          cid,
 		HashCID:      hashCID,
 		FullName:     fullName,
 		Email:        email,
-		Role:         modelAuth.RoleUser,
-		Status:       false, // รอการอนุมัติจาก admin
+		Role:         role,
+		Status:       status,
 		FacilityType: &facilityType,
 		FacilityCode: &facilityCode,
 		FacilityName: &facilityName,

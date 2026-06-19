@@ -102,7 +102,7 @@ func Register(db *sql.DB) fiber.Handler {
 				Message: "เกิดข้อผิดพลาดในการตรวจสอบข้อมูล",
 			})
 		}
-		if len(admins) == 0 {
+		if len(admins) == 0 && !serviceRegister.IsAdminCID(req.CID) {
 			log.Printf("⚠️ พยายามลงทะเบียน แต่ระบบยังไม่มี admin")
 			return c.Status(403).JSON(registerUtils.RegisterResponse{
 				Success: false,

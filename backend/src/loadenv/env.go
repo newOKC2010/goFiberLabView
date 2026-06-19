@@ -88,6 +88,14 @@ func LoadOTPExpiresIn() string {
 	return os.Getenv("OTP_EXPIRES_IN")
 }
 
+func LoadAdminCIDs() []string {
+	raw := os.Getenv("CID_ADMIN")
+	if raw == "" {
+		return nil
+	}
+	return strings.Split(raw, ",")
+}
+
 func LoadOauth() LoadOauthConfig {
 	godotenv.Load()
 	return LoadOauthConfig{
