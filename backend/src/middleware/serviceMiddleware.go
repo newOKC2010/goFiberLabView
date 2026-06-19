@@ -33,9 +33,9 @@ func GetUserByID(db *sql.DB, userID int64) (*UserViewLabInfo, error) {
 	var role string
 
 	err := db.QueryRow(
-		`SELECT id, email, role, status FROM user_view_lab WHERE id = $1`,
+		`SELECT id, cid, email, role, status FROM user_view_lab WHERE id = $1`,
 		userID,
-	).Scan(&user.ID, &user.Email, &role, &user.Status)
+	).Scan(&user.ID, &user.CID, &user.Email, &role, &user.Status)
 
 	if err != nil {
 		return nil, err
@@ -43,6 +43,7 @@ func GetUserByID(db *sql.DB, userID int64) (*UserViewLabInfo, error) {
 
 	userInfo := &UserViewLabInfo{
 		ID:     user.ID,
+		CID:    user.CID,
 		Email:  user.Email,
 		Role:   role,
 		Status: user.Status,

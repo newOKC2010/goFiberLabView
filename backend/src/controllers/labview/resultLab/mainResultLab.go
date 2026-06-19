@@ -9,6 +9,7 @@ import (
 	resultLabHandler "view_lab/src/controllers/labview/resultLab/handler"
 	resultLabService "view_lab/src/controllers/labview/resultLab/service"
 	resultLabUtils "view_lab/src/controllers/labview/resultLab/utils"
+	middleware "view_lab/src/middleware"
 )
 
 var cidRegex = regexp.MustCompile(`^\d{13}$`)
@@ -68,6 +69,8 @@ func GetLabResults(c *fiber.Ctx) error {
 		})
 	}
 
+	viewer, _ := c.Locals("user_view_lab").(*middleware.UserViewLabInfo)
+
 	log.Printf("🔍 GetLabResults CID=%s, start=%s, end=%s",
 		req.CID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
 
@@ -78,6 +81,10 @@ func GetLabResults(c *fiber.Ctx) error {
 			"success": false,
 			"message": "เกิดข้อผิดพลาดในการดึงข้อมูล",
 		})
+	}
+
+	if viewer != nil {
+		go resultLabService.InsertLog(viewer.ID, viewer.CID, req.CID, startDate, endDate, len(results))
 	}
 
 	if len(results) == 0 {
