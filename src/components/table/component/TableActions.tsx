@@ -21,15 +21,14 @@ export default function TableActions<T>({
     <div className="flex items-center justify-center gap-2">
       {onToggleStatus && (
         <button
-          onClick={() => !isApproved && onToggleStatus(item)}
-          disabled={isApproved}
-          className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
+          onClick={() => onToggleStatus(item)}
+          className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
             isApproved
-              ? 'bg-green-100 text-green-700 opacity-60 cursor-not-allowed'
-              : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 cursor-pointer'
+              ? 'bg-red-50 text-red-600 hover:bg-red-100'
+              : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
           }`}
         >
-          {isApproved ? 'ยืนยันแล้ว' : statusButtonText} 
+          {isApproved ? 'ระงับ' : statusButtonText}
         </button>
       )}
       {onEdit && (
