@@ -20,6 +20,7 @@ function ErrorAlertWrapper() {
 export default function AuthPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [verifiedEmail, setVerifiedEmail] = useState('');
@@ -27,8 +28,33 @@ export default function AuthPage() {
   const [showLoginSuccess, setShowLoginSuccess] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (value && !validateEmail(value)) {
+      setEmailError('รูปแบบอีเมลไม่ถูกต้อง');
+    } else {
+      setEmailError('');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email) {
+      setEmailError('กรุณากรอกอีเมล');
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setEmailError('รูปแบบอีเมลไม่ถูกต้อง');
+      return;
+    }
+    
     setLoading(true);
     const result = await handleLoginRequest(email);
     if (result.success) {
@@ -37,6 +63,8 @@ export default function AuthPage() {
     }
     setLoading(false);
   };
+
+  const isFormValid = email.trim() !== '' && validateEmail(email) && !emailError;
 
   const handleOtpVerify = async (otp: string) => {
     setVerifyLoading(true);
@@ -48,7 +76,7 @@ export default function AuthPage() {
       setShowLoginSuccess(true);
 
       setTimeout(() => {
-        router.push('/labView');
+        router.push('/labView/result');
       }, 2000);
     }
   };
@@ -99,10 +127,11 @@ export default function AuthPage() {
                 <InputText
                   type="text"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleEmailChange(e.target.value)}
                   placeholder="name@example.com"
                   maxWidth={400}
                   icon="mail"
+                  error={emailError}
                 />
               </div>
 
@@ -112,7 +141,7 @@ export default function AuthPage() {
                   variant="pastel"
                   size="md"
                   loading={loading}
-                  disabled={loading}
+                  disabled={loading || !isFormValid}
                   className="w-[200px] sm:w-auto sm:min-w-[200px] bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white rounded-2xl"
                   icon="login"
                 >

@@ -5,16 +5,16 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
   const { pathname } = request.nextUrl;
 
-  // ถ้าไม่มี token และพยายามเข้า /req
+  // ถ้าไม่มี token และพยายามเข้า /labView
   if (pathname.startsWith('/labView') && !token) {
     const url = new URL('/auth', request.url);
     url.searchParams.set('error', 'no_token');
     return NextResponse.redirect(url);
   }
 
-  // ถ้ามี token และอยู่หน้า /auth ให้ไปหน้า /req/report
+  // ถ้ามี token และอยู่หน้า /auth ให้ไปหน้า /labView/result
   if (pathname === '/auth' && token) {
-    return NextResponse.redirect(new URL('/labView', request.url));
+    return NextResponse.redirect(new URL('/labView/result', request.url));
   }
 
   // ป้องกัน cache สำหรับหน้า /labView/* (ป้องกัน bfcache)

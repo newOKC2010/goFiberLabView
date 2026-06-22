@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { UserStaffInfo, USER_ROLES } from '@/global/globalAuth';
+import { UserViewLabInfo, USER_ROLES } from '@/global/globalAuth';
 import { handleLogout, handleMenuClick } from '@/components/sidebar/handler/sidebarHandler';
 import MobileToggle from '@/components/sidebar/component/MobileToggle';
 import SidebarBackdrop from '@/components/sidebar/component/SidebarBackdrop';
@@ -11,26 +11,27 @@ import SidebarMenu from '@/components/sidebar/component/SidebarMenu';
 import SidebarFooter from '@/components/sidebar/component/SidebarFooter';
 
 interface SidebarProps {
-  user: UserStaffInfo | null;
+  user: UserViewLabInfo | null;
 }
 
-const ALL_MENUS = [
-  { 
-    name: 'ข้อมูลน้ำ', 
-    icon: 'water_drop', 
+const USER_MENUS = [
+  {
+    name: 'ผลการตรวจ Lab',
+    icon: 'biotech',
     children: [
-      { name: 'Dashboard', path: '/ecobase/water/dashboard', icon: 'Bar_Chart_4_Bars' },
-      { name: 'จัดการข้อมูล', path: '/ecobase/water/manage', icon: 'edit_note' }
+      { name: 'ดูผลการตรวจ', path: '/labView/result', icon: 'lab_research' },
     ]
   },
-  { 
-    name: 'ข้อมูลขยะ', 
-    icon: 'delete', 
+];
+
+const ADMIN_MENUS = [
+  {
+    name: 'จัดการผู้ใช้งาน',
+    icon: 'manage_accounts',
     children: [
-      { name: 'Dashboard', path: '/ecobase/waste/dashboard', icon: 'Bar_Chart_4_Bars' },
-      { name: 'จัดการข้อมูล', path: '/ecobase/waste/manage', icon: 'edit_note' }
+      { name: 'รายการผู้ใช้งาน', path: '/labView/users', icon: 'group' },
     ]
-  }
+  },
 ];
 
 export default function Sidebar({ user }: SidebarProps) {
@@ -41,7 +42,8 @@ export default function Sidebar({ user }: SidebarProps) {
   const closeSidebar = () => setIsOpen(false);
   const toggleSidebar = () => setIsOpen(true);
 
-  const filteredMenus = ALL_MENUS;
+  const isAdmin = user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.SUPER_ADMIN;
+  const filteredMenus = isAdmin ? [...USER_MENUS, ...ADMIN_MENUS] : USER_MENUS;
 
   return (
     <>

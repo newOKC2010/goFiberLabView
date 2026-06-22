@@ -114,7 +114,7 @@ export const RegisterModal = ({ isOpen, onClose }: RegisterModalProps) => {
             placeholder="-- เลือกประเภทสถานพยาบาล --"
             inModal={true}
           />
-          {errors.facilityType && <p className="text-xs text-red-500 ml-1">{errors.facilityType}</p>}
+          {errors.facilityType && <p className="text-xs text-red-500 ml-1 font-bold">{errors.facilityType}</p>}
         </div>
 
         <div className="space-y-1">

@@ -34,8 +34,8 @@ export default function SidebarMenu({ menus, currentPath, onMenuClick }: Sidebar
             onClick={() => menu.children ? toggleMenu(menu.name) : menu.path && onMenuClick(menu.path)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200 cursor-pointer
               ${isActive(menu.path) || isChildActive(menu.children)
-                ? 'bg-emerald-50 text-emerald-600 shadow-sm'
-                : 'text-gray-600 hover:bg-emerald-50/50 hover:scale-105 hover:shadow-md'
+                ? 'bg-blue-50 text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:bg-blue-50/50 hover:scale-105 hover:shadow-md'
             }`}
           >
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'wght' 700" }}>
@@ -62,8 +62,8 @@ export default function SidebarMenu({ menus, currentPath, onMenuClick }: Sidebar
                     onClick={() => child.path && onMenuClick(child.path)}
                     className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer
                       ${isActive(child.path)
-                        ? 'bg-emerald-50 text-emerald-600'
-                        : 'text-gray-500 hover:bg-emerald-50/50'
+                        ? 'bg-blue-50 text-blue-600'
+                        : 'text-gray-500 hover:bg-blue-50/50'
                     }`}
                   >
                     <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'wght' 700" }}>
