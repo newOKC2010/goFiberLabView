@@ -1,0 +1,15 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: image-go-view-lab-backend
+    container_name: container-go-view-lab-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env:ro
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
