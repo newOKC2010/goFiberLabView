@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Table from '@/components/table/mainTable';
 import Pagination from '@/components/pagination/mainPagination';
 import { PaginationData } from '@/components/pagination/handler/handlerPagination';
 import { handleGetUsers, handleUpdateStatus } from '@/app/labView/users/handler/handlerUsers';
-import { UserItem } from '@/app/labView/users/utils/types';
+import { UserItem, GetUsersResponse } from '@/app/labView/users/utils/types';
 import { showToast, showConfirm } from '@/global/globalSwal';
 
 const PAGE_SIZE = 10;
@@ -17,44 +17,48 @@ const formatThaiDateTime = (iso: string): string => {
 };
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [togglingId, setTogglingId] = useState<number | null>(null);
+  const [responseData, setResponseData] = useState<GetUsersResponse | null>(null);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async (page: number, searchVal: string) => {
     setLoading(true);
-    const res = await handleGetUsers();
+    const res = await handleGetUsers(page, PAGE_SIZE, searchVal);
     setLoading(false);
     if (!res.success) {
       showToast(res.message || 'โหลดข้อมูลไม่สำเร็จ', 'error');
       return;
     }
-    setUsers(res.data?.users || []);
+    setResponseData(res.data || null);
+  }, []);
+
+  useEffect(() => {
+    loadUsers(currentPage, search);
+  }, [currentPage, search, loadUsers]);
+
+  const handleSearchSubmit = () => {
+    setCurrentPage(1);
+    setSearch(searchInput);
   };
 
-  useEffect(() => { loadUsers(); }, []);
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSearchSubmit();
+  };
 
-  const filtered = useMemo(() =>
-    users.filter(u => u.full_name.toLowerCase().includes(search.toLowerCase())),
-    [users, search]
-  );
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePage = Math.min(currentPage, totalPages);
-  const pageData = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const pageData: UserItem[] = responseData?.data || [];
 
   const paginationData: PaginationData = {
     count: pageData.length,
-    total_count: filtered.length,
-    total_pages: totalPages,
-    current_page: safePage,
-  };
-
-  const handleSearch = (val: string) => {
-    setSearch(val);
-    setCurrentPage(1);
+    total_count: responseData?.total_count || 0,
+    total_pages: responseData?.total_pages || 1,
+    current_page: responseData?.current_page || 1,
   };
 
   const handleToggleStatus = async (user: UserItem) => {
@@ -77,7 +81,7 @@ export default function UsersPage() {
       return;
     }
     showToast(`${action}ผู้ใช้สำเร็จ`, 'success');
-    await loadUsers();
+    await loadUsers(currentPage, search);
   };
 
   const columns = [
@@ -86,7 +90,7 @@ export default function UsersPage() {
       label: '#',
       render: (_: UserItem) => {
         const idx = pageData.indexOf(_);
-        return <span>{(safePage - 1) * PAGE_SIZE + idx + 1}</span>;
+        return <span>{(paginationData.current_page - 1) * PAGE_SIZE + idx + 1}</span>;
       },
     },
     {
@@ -125,23 +129,32 @@ export default function UsersPage() {
             จัดการผู้ใช้งาน
           </h1>
           <p className="text-sm text-gray-500 font-bold mt-1 ml-8">
-            ทั้งหมด {users.length} บัญชี
+            ทั้งหมด {responseData?.total_count ?? '-'} บัญชี
           </p>
         </div>
 
         {/* Search */}
-        <div className="relative w-full sm:w-72">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none"
-            style={{ fontVariationSettings: "'wght' 400" }}>
-            search
-          </span>
-          <input
-            type="text"
-            value={search}
-            onChange={e => handleSearch(e.target.value)}
-            placeholder="ค้นหาชื่อ..."
-            className="w-full pl-9 pr-4 py-2.5 text-sm font-bold border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
-          />
+        <div className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none"
+              style={{ fontVariationSettings: "'wght' 400" }}>
+              search
+            </span>
+            <input
+              type="text"
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="ค้นหาชื่อ..."
+              className="w-full pl-9 pr-4 py-2.5 text-sm font-bold border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+            />
+          </div>
+          <button
+            onClick={handleSearchSubmit}
+            className="px-4 py-2.5 text-sm font-bold bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition cursor-pointer"
+          >
+            ค้นหา
+          </button>
         </div>
       </div>
 
@@ -154,15 +167,15 @@ export default function UsersPage() {
           onToggleStatus={handleToggleStatus}
           getItemId={u => u.id}
           getItemStatus={u => u.status}
-          statusButtonText="เปลี่ยนสถานะ"
+          statusButtonText="อนุมัติ"
         />
       </div>
 
       {/* Pagination */}
-      {!loading && filtered.length > 0 && (
+      {!loading && (responseData?.total_count ?? 0) > 0 && (
         <Pagination
           paginationData={paginationData}
-          onPageChange={setCurrentPage}
+          onPageChange={handlePageChange}
           loading={loading}
         />
       )}

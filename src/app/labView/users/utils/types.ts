@@ -7,6 +7,9 @@ export interface UserItem {
 
 export interface GetUsersResponse {
   success: boolean;
-  total: number;
-  users: UserItem[];
+  message: string;
+  data: UserItem[];
+  total_count: number;
+  total_pages: number;
+  current_page: number;
 }

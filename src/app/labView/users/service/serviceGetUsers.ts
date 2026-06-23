@@ -2,10 +2,15 @@ import { API_BASE_URL, API_ENDPOINTS } from '@/global/globalApi';
 import { AuthToken } from '@/global/globalAuth';
 import { GetUsersResponse } from '@/app/labView/users/utils/types';
 
-export async function fetchUsers(): Promise<{ success: boolean; data?: GetUsersResponse; message?: string }> {
+export async function fetchUsers(
+  page: number = 1,
+  pageSize: number = 10,
+  search: string = ''
+): Promise<{ success: boolean; data?: GetUsersResponse; message?: string }> {
   try {
     const token = AuthToken.getToken();
-    const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.USER.VIEW_USER}`, {
+    const params = new URLSearchParams({ page: String(page), page_size: String(pageSize), search });
+    const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.USER.VIEW_USER}?${params}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
