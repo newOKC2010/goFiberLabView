@@ -8,6 +8,7 @@ import { handleGetLabResult } from '@/app/labView/result/handler/handlerLabResul
 import { LabResultResponse, LabGroupedResult } from '@/app/labView/result/utils/types';
 import { showToast } from '@/global/globalSwal';
 import { formatThaiDate } from '@/components/dataPicker/handler/datePickerHandlers';
+import PrintReport from '@/app/labView/result/components/PrintReport';
 
 export default function ResultPage() {
   const today = new Date().toISOString().split('T')[0];
@@ -18,6 +19,7 @@ export default function ResultPage() {
   const [result, setResult] = useState<LabResultResponse | null>(null);
   const [searched, setSearched] = useState(false);
   const [openDates, setOpenDates] = useState<string[]>([]);
+  const [isPrintOpen, setIsPrintOpen] = useState(false);
 
   const toggleDate = (date: string) => {
     setOpenDates(prev =>
@@ -54,6 +56,17 @@ export default function ResultPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+
+      {isPrintOpen && result && (
+        <PrintReport
+          ptName={result.pt_name}
+          cid={cid}
+          startDate={startDate}
+          endDate={endDate}
+          results={result.results}
+          onClose={() => setIsPrintOpen(false)}
+        />
+      )}
 
       {/* Header */}
       <div className="mb-6">
@@ -132,9 +145,20 @@ export default function ResultPage() {
                 <p className="text-lg font-bold text-gray-800">{result.pt_name || '-'}</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-500 font-bold">รายการทั้งหมด</p>
-              <p className="text-xl font-bold text-blue-600">{result.total}</p>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <p className="text-xs text-gray-500 font-bold">รายการทั้งหมด</p>
+                <p className="text-xl font-bold text-blue-600">{result.total}</p>
+              </div>
+              {result.results.length > 0 && (
+                <button
+                  onClick={() => setIsPrintOpen(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'wght' 700" }}>print</span>
+                  พิมพ์รายงาน
+                </button>
+              )}
             </div>
           </div>
 
