@@ -5,16 +5,30 @@ import (
 	conn "view_lab/src/database/connection"
 )
 
-// GetAllUsers ดึงรายชื่อผู้ใช้ทั้งหมดจาก DB (เฉพาะ role user)
-func GetAllUsers() ([]manageUserUtils.UserItem, error) {
+// GetAllUsers ดึงรายชื่อผู้ใช้แบบ offset pagination (เฉพาะ role user)
+func GetAllUsers(page, pageSize int, search string) ([]manageUserUtils.UserItem, int, error) {
+	offset := (page - 1) * pageSize
+	searchParam := "%" + search + "%"
+
+	var totalCount int
+	err := conn.DB.QueryRow(
+		`SELECT COUNT(*) FROM user_view_lab WHERE role = 'user' AND full_name ILIKE $1`,
+		searchParam,
+	).Scan(&totalCount)
+	if err != nil {
+		return nil, 0, err
+	}
+
 	rows, err := conn.DB.Query(
 		`SELECT id, full_name, status, created_at
 		 FROM user_view_lab
-		 WHERE role = 'user'
-		 ORDER BY created_at DESC`,
+		 WHERE role = 'user' AND full_name ILIKE $1
+		 ORDER BY created_at DESC
+		 LIMIT $2 OFFSET $3`,
+		searchParam, pageSize, offset,
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
@@ -22,10 +36,10 @@ func GetAllUsers() ([]manageUserUtils.UserItem, error) {
 	for rows.Next() {
 		var u manageUserUtils.UserItem
 		if err := rows.Scan(&u.ID, &u.FullName, &u.Status, &u.CreatedAt); err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		users = append(users, u)
 	}
 
-	return users, nil
+	return users, totalCount, nil
 }

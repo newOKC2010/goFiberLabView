@@ -9,10 +9,19 @@ type UserItem struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type GetUsersQuery struct {
+	Page     int    `query:"page"`
+	PageSize int    `query:"page_size"`
+	Search   string `query:"search"`
+}
+
 type GetUsersResponse struct {
-	Success bool       `json:"success"`
-	Total   int        `json:"total"`
-	Users   []UserItem `json:"users"`
+	Success     bool       `json:"success"`
+	Message     string     `json:"message"`
+	Data        []UserItem `json:"data"`
+	TotalCount  int        `json:"total_count"`
+	TotalPages  int        `json:"total_pages"`
+	CurrentPage int        `json:"current_page"`
 }
 
 type UpdateStatusRequest struct {

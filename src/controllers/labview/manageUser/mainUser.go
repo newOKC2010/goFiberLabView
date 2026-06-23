@@ -10,7 +10,22 @@ import (
 )
 
 func GetUsers(c *fiber.Ctx) error {
-	result, err := manageUserHandler.GetUsers()
+	var query manageUserUtils.GetUsersQuery
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"success": false,
+			"message": "query params ไม่ถูกต้อง",
+		})
+	}
+
+	if query.Page < 1 {
+		query.Page = 1
+	}
+	if query.PageSize < 1 {
+		query.PageSize = 10
+	}
+
+	result, err := manageUserHandler.GetUsers(query.Page, query.PageSize, query.Search)
 	if err != nil {
 		log.Printf("❌ GetUsers error: %v", err)
 		return c.Status(500).JSON(fiber.Map{
