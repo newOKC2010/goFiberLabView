@@ -4,11 +4,15 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { checkAuth, UserViewLabInfo } from '@/global/globalAuth';
 import Sidebar from '@/components/sidebar/mainSidebar';
+import PdpaModal from '@/components/pdpa/PdpaModal';
+
+const PDPA_SESSION_KEY = 'pdpa_acknowledged';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<UserViewLabInfo | null>(null);
+  const [showPdpa, setShowPdpa] = useState(false);
 
   useEffect(() => {
     const verify = async () => {
@@ -21,10 +25,19 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       }
 
       setUser(auth.user || null);
+
+      if (!sessionStorage.getItem(PDPA_SESSION_KEY)) {
+        setShowPdpa(true);
+      }
     };
 
     verify();
   }, [pathname, router]);
+
+  const handleAcknowledge = () => {
+    sessionStorage.setItem(PDPA_SESSION_KEY, '1');
+    setShowPdpa(false);
+  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -33,6 +46,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="lg:hidden h-16" />
         {children}
       </main>
+      {showPdpa && <PdpaModal onAcknowledge={handleAcknowledge} />}
     </div>
   );
 }

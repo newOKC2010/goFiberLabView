@@ -3,6 +3,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 
 export const handleLogout = (router: AppRouterInstance) => {
   AuthToken.removeToken();
+  sessionStorage.removeItem('pdpa_acknowledged');
   // Force reload เพื่อให้แน่ใจว่าหน้าไม่ถูกแคช
   window.location.replace('/auth');
 };
