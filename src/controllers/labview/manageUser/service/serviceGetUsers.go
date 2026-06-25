@@ -20,7 +20,7 @@ func GetAllUsers(page, pageSize int, search string) ([]manageUserUtils.UserItem,
 	}
 
 	rows, err := conn.DB.Query(
-		`SELECT id, full_name, status, created_at
+		`SELECT id, full_name, facility_name, status, created_at
 		 FROM user_view_lab
 		 WHERE role = 'user' AND full_name ILIKE $1
 		 ORDER BY created_at DESC
@@ -35,7 +35,7 @@ func GetAllUsers(page, pageSize int, search string) ([]manageUserUtils.UserItem,
 	var users []manageUserUtils.UserItem
 	for rows.Next() {
 		var u manageUserUtils.UserItem
-		if err := rows.Scan(&u.ID, &u.FullName, &u.Status, &u.CreatedAt); err != nil {
+		if err := rows.Scan(&u.ID, &u.FullName, &u.FacilityName, &u.Status, &u.CreatedAt); err != nil {
 			return nil, 0, err
 		}
 		users = append(users, u)

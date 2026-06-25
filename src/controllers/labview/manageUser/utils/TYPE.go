@@ -3,10 +3,11 @@ package manageUserUtils
 import "time"
 
 type UserItem struct {
-	ID        int64     `json:"id"`
-	FullName  string    `json:"full_name"`
-	Status    bool      `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
+	ID           int64     `json:"id"`
+	FullName     string    `json:"full_name"`
+	FacilityName *string   `json:"facility_name"`
+	Status       bool      `json:"status"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type GetUsersQuery struct {
