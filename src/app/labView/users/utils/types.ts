@@ -1,6 +1,7 @@
 export interface UserItem {
   id: number;
   full_name: string;
+  facility_name: string | null;
   status: boolean;
   created_at: string;
 }

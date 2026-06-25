@@ -99,6 +99,11 @@ export default function UsersPage() {
       render: (u: UserItem) => <span className="font-bold text-gray-800">{u.full_name}</span>,
     },
     {
+      key: 'facility_name',
+      label: 'สถานพยาบาล',
+      render: (u: UserItem) => <span className="font-bold text-gray-600">{u.facility_name || '-'}</span>,
+    },
+    {
       key: 'created_at',
       label: 'วันที่สมัคร',
       render: (u: UserItem) => <span>{formatThaiDateTime(u.created_at)}</span>,
