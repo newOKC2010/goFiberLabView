@@ -18,10 +18,15 @@ type LabItem struct {
 	LabResult   *string `json:"lab_order_result"`
 }
 
-type LabGroupedResult struct {
-	PtName    string    `json:"-"`
-	OrderDate string    `json:"order_date"`
+type LabCategory struct {
+	GroupName string    `json:"group_name"`
 	Items     []LabItem `json:"items"`
+}
+
+type LabGroupedResult struct {
+	PtName    string        `json:"-"`
+	OrderDate string        `json:"order_date"`
+	Groups    []LabCategory `json:"groups"`
 }
 
 type LabResultResponse struct {
