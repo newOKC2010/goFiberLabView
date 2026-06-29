@@ -3,9 +3,14 @@ export interface LabItem {
   lab_order_result: string | null;
 }
 
+export interface LabCategory {
+  group_name: string;
+  items: LabItem[];
+}
+
 export interface LabGroupedResult {
   order_date: string;
-  items: LabItem[];
+  groups: LabCategory[];
 }
 
 export interface LabResultResponse {

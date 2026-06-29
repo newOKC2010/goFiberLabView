@@ -5,7 +5,7 @@ import CidInput from '@/components/input/cid/mainInputCID';
 import HeaderFiltersDateRange from '@/components/dataPicker/headerFiltersDateRange';
 import { Button } from '@/components/buttonClick/mainButton';
 import { handleGetLabResult } from '@/app/labView/result/handler/handlerLabResult';
-import { LabResultResponse, LabGroupedResult } from '@/app/labView/result/utils/types';
+import { LabResultResponse, LabGroupedResult, LabCategory } from '@/app/labView/result/utils/types';
 import { showToast } from '@/global/globalSwal';
 import { formatThaiDate } from '@/components/dataPicker/handler/datePickerHandlers';
 import PrintReport from '@/app/labView/result/components/PrintReport';
@@ -54,6 +54,9 @@ export default function ResultPage() {
     }
   };
 
+  const totalItems = (group: LabGroupedResult) =>
+    group.groups.reduce((acc, g) => acc + g.items.length, 0);
+
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
 
@@ -81,8 +84,6 @@ export default function ResultPage() {
 
       {/* Filter Card */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
-
-        {/* CID */}
         <div className="mb-5">
           <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
             <span className="material-symbols-outlined text-blue-500 text-base" style={{ fontVariationSettings: "'wght' 700" }}>
@@ -95,7 +96,6 @@ export default function ResultPage() {
           </div>
         </div>
 
-        {/* Date Range */}
         <div className="mb-5">
           <HeaderFiltersDateRange
             startDate={startDate}
@@ -105,7 +105,6 @@ export default function ResultPage() {
           />
         </div>
 
-        {/* Buttons */}
         <div className="flex justify-end gap-2">
           <Button
             variant="pastel"
@@ -188,7 +187,7 @@ export default function ResultPage() {
                     </span>
                     <span className="font-bold text-gray-800">{formatThaiDate(group.order_date)}</span>
                     <span className="text-xs bg-blue-100 text-blue-600 font-bold px-2 py-0.5 rounded-full">
-                      {group.items.length} รายการ
+                      {totalItems(group)} รายการ
                     </span>
                   </div>
                   <span className="material-symbols-outlined text-gray-400">
@@ -196,27 +195,38 @@ export default function ResultPage() {
                   </span>
                 </button>
 
-                {/* Lab Items Table */}
+                {/* Categories */}
                 {openDates.includes(group.order_date) && (
-                  <div className="border-t border-gray-100">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="bg-gray-50">
-                          <th className="text-left px-5 py-2 text-gray-500 font-bold">รายการตรวจ</th>
-                          <th className="text-right px-5 py-2 text-gray-500 font-bold">ผลการตรวจ</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {group.items.map((item, idx) => (
-                          <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
-                            <td className="px-5 py-2.5 font-bold text-gray-700">{item.lab_items_name}</td>
-                            <td className="px-5 py-2.5 text-right font-bold text-blue-700">
-                              {item.lab_order_result ?? '-'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="border-t border-gray-100 divide-y divide-gray-50">
+                    {group.groups.map((cat: LabCategory) => (
+                      <div key={cat.group_name}>
+
+                        {/* Category Label */}
+                        <div className="flex items-center gap-2 px-5 py-2.5 bg-gray-50">
+                          <span className="material-symbols-outlined text-blue-400 text-sm" style={{ fontVariationSettings: "'wght' 500" }}>
+                            category
+                          </span>
+                          <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">
+                            {cat.group_name}
+                          </span>
+                          <span className="text-xs text-gray-400 font-bold">({cat.items.length})</span>
+                        </div>
+
+                        {/* Items Table */}
+                        <table className="w-full text-sm">
+                          <tbody>
+                            {cat.items.map((item, idx) => (
+                              <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'}>
+                                <td className="px-5 py-2.5 font-bold text-gray-700">{item.lab_items_name}</td>
+                                <td className="px-5 py-2.5 text-right font-bold text-blue-700 w-44">
+                                  {item.lab_order_result ?? '-'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

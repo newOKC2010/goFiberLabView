@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { LabGroupedResult } from '@/app/labView/result/utils/types';
+import { LabGroupedResult, LabCategory } from '@/app/labView/result/utils/types';
 import { formatThaiDate, THAI_MONTHS } from '@/components/dataPicker/handler/datePickerHandlers';
 
 interface PrintReportProps {
@@ -47,7 +47,7 @@ function ReportContent({ ptName, cid, startDate, endDate, results }: ReportConte
   const monthGroups = groupByMonth(results);
   const todayISO = new Date().toISOString().split('T')[0];
   const printedDate = formatThaiDate(todayISO);
-  const totalItems = results.reduce((acc, g) => acc + g.items.length, 0);
+  const totalItems = results.reduce((acc, g) => acc + g.groups.reduce((a, c) => a + c.items.length, 0), 0);
 
   return (
     <div className="bg-white w-full">
@@ -90,6 +90,7 @@ function ReportContent({ ptName, cid, startDate, endDate, results }: ReportConte
       <div style={{ padding: '1.5rem 3rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
         {monthGroups.map(([monthKey, groups]) => (
           <section key={monthKey}>
+            {/* Month Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
               <div style={{ width: '4px', height: '20px', backgroundColor: '#2563eb', borderRadius: '2px', flexShrink: 0 }} />
               <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -97,7 +98,7 @@ function ReportContent({ ptName, cid, startDate, endDate, results }: ReportConte
               </span>
               <div style={{ flex: 1, height: '1px', backgroundColor: '#bfdbfe' }} />
               <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#9ca3af' }}>
-                {groups.reduce((a, g) => a + g.items.length, 0)} รายการ
+                {groups.reduce((a, g) => a + g.groups.reduce((b, c) => b + c.items.length, 0), 0)} รายการ
               </span>
             </div>
 
@@ -106,26 +107,37 @@ function ReportContent({ ptName, cid, startDate, endDate, results }: ReportConte
                 <p style={{ fontSize: '0.7rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.4rem' }}>
                   วันที่ตรวจ : {formatThaiDate(group.order_date)}
                 </p>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#f3f4f6' }}>
-                      <th style={thStyle(true)}>
-                        <span style={{ display: 'block', width: '2rem', textAlign: 'center' }}>#</span>
-                      </th>
-                      <th style={thStyleWide()}>รายการตรวจ</th>
-                      <th style={thStyleResult()}>ผลการตรวจ</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {group.items.map((item, idx) => (
-                      <tr key={idx} style={{ backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb' }}>
-                        <td style={tdCenter()}>{idx + 1}</td>
-                        <td style={tdLeft()}>{item.lab_items_name}</td>
-                        <td style={tdResult()}>{item.lab_order_result ?? '-'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+                {group.groups.map((cat: LabCategory) => (
+                  <div key={cat.group_name} style={{ marginBottom: '0.75rem' }}>
+                    {/* Category Label */}
+                    <div style={{ backgroundColor: '#f0f9ff', padding: '0.3rem 0.75rem', marginBottom: '0', borderLeft: '3px solid #38bdf8' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                        {cat.group_name}
+                      </span>
+                    </div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#f3f4f6' }}>
+                          <th style={thStyle()}>
+                            <span style={{ display: 'block', width: '2rem', textAlign: 'center' }}>#</span>
+                          </th>
+                          <th style={thStyleWide()}>รายการตรวจ</th>
+                          <th style={thStyleResult()}>ผลการตรวจ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cat.items.map((item, idx) => (
+                          <tr key={idx} style={{ backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb' }}>
+                            <td style={tdCenter()}>{idx + 1}</td>
+                            <td style={tdLeft()}>{item.lab_items_name}</td>
+                            <td style={tdResult()}>{item.lab_order_result ?? '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
               </div>
             ))}
           </section>
@@ -158,19 +170,9 @@ function InfoRowInline({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SignatureBlock({ label }: { label: string }) {
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ width: '13rem', borderBottom: '1px solid #9ca3af', marginTop: '3.5rem', marginBottom: '0.4rem' }} />
-      <p style={{ fontSize: '0.7rem', fontWeight: 700, color: '#4b5563', margin: '0 0 0.25rem' }}>{label}</p>
-      <p style={{ fontSize: '0.7rem', fontWeight: 700, color: '#9ca3af', margin: 0 }}>วันที่ ................................................</p>
-    </div>
-  );
-}
-
 const border = '1px solid #d1d5db';
-function thStyle(center?: boolean) {
-  return { border, padding: '0.5rem 0.75rem', fontWeight: 700, color: '#374151', textAlign: (center ? 'center' : 'left') as 'center' | 'left' };
+function thStyle() {
+  return { border, padding: '0.5rem 0.75rem', fontWeight: 700, color: '#374151', textAlign: 'center' as const };
 }
 function thStyleWide() {
   return { border, padding: '0.5rem 1rem', fontWeight: 700, color: '#374151', textAlign: 'left' as const };
@@ -234,7 +236,7 @@ export default function PrintReport({ ptName, cid, startDate, endDate, results, 
         </div>
       </div>
 
-      {/* Print Portal — direct child of body */}
+      {/* Print Portal */}
       {createPortal(
         <div id="lab-print-portal" style={{ display: 'none' }}>
           <ReportContent {...props} />
