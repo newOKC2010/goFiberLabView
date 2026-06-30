@@ -28,7 +28,7 @@ func GetLabResults(cid string, startDate, endDate time.Time) ([]resultLabUtils.L
 		WHERE pt.cid = $1
 		AND lh.order_date BETWEEN $2 AND $3
 		AND li.lab_items_name IS NOT NULL
-		ORDER BY lh.order_date ASC, lg.lab_items_group_code ASC, li.lab_items_name ASC`,
+		ORDER BY lh.order_date ASC, lg.lab_items_group_code ASC, li.display_order ASC`,
 		cid, startDate, endDate,
 	)
 	if err != nil {
