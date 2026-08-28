@@ -11,6 +11,7 @@ interface FlatItem {
   group_name: string;
   lab_items_name: string;
   lab_order_result: string | null;
+  lab_items_normal_value_ref: string | null;
 }
 
 interface PrintStickerProps {
@@ -30,6 +31,7 @@ function flattenItems(results: LabGroupedResult[]): FlatItem[] {
           group_name: cat.group_name,
           lab_items_name: item.lab_items_name,
           lab_order_result: item.lab_order_result,
+          lab_items_normal_value_ref: item.lab_items_normal_value_ref,
         });
       });
     });
@@ -76,8 +78,11 @@ function StickerPage({ ptName, items, isLast }: { ptName: string; items: FlatIte
             <th style={{ textAlign: 'left', padding: '2pt 4pt', fontWeight: 600, color: '#374151', fontSize: '7pt', borderBottom: '1px solid #d1d5db' }}>
               รายการตรวจ
             </th>
-            <th style={{ textAlign: 'right', padding: '2pt 4pt', fontWeight: 600, color: '#374151', fontSize: '7pt', borderBottom: '1px solid #d1d5db', width: '35%' }}>
+            <th style={{ textAlign: 'center', padding: '2pt 4pt', fontWeight: 600, color: '#374151', fontSize: '7pt', borderBottom: '1px solid #d1d5db', width: '22%' }}>
               ผล
+            </th>
+            <th style={{ textAlign: 'center', padding: '2pt 4pt', fontWeight: 600, color: '#374151', fontSize: '7pt', borderBottom: '1px solid #d1d5db', width: '30%' }}>
+              ค่าปกติ
             </th>
           </tr>
         </thead>
@@ -87,8 +92,11 @@ function StickerPage({ ptName, items, isLast }: { ptName: string; items: FlatIte
               <td style={{ padding: '2.5pt 4pt', fontWeight: 500, color: '#1f2937', fontSize: '7.5pt' }}>
                 {item.lab_items_name}
               </td>
-              <td style={{ padding: '2.5pt 4pt', textAlign: 'right', fontWeight: 700, color: '#1d4ed8', fontSize: '7.5pt' }}>
+              <td style={{ padding: '2.5pt 4pt', textAlign: 'center', fontWeight: 700, color: '#1d4ed8', fontSize: '7.5pt' }}>
                 {item.lab_order_result ?? '-'}
+              </td>
+              <td style={{ padding: '2.5pt 4pt', textAlign: 'center', fontWeight: 400, color: '#6b7280', fontSize: '6.5pt' }}>
+                {item.lab_items_normal_value_ref ?? '-'}
               </td>
             </tr>
           ))}
@@ -186,7 +194,7 @@ export default function PrintSticker({ ptName, results, onClose }: PrintStickerP
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-gray-700 truncate">{item.lab_items_name}</p>
-                        <p className="text-xs text-gray-400">{item.group_name}</p>
+                        <p className="text-xs text-gray-400">{item.group_name}{item.lab_items_normal_value_ref ? ` · ค่าปกติ: ${item.lab_items_normal_value_ref}` : ''}</p>
                       </div>
                       <span className="text-sm font-bold text-blue-700 flex-shrink-0">{item.lab_order_result ?? '-'}</span>
                     </label>

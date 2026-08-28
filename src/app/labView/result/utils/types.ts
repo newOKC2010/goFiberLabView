@@ -1,6 +1,7 @@
 export interface LabItem {
   lab_items_name: string;
   lab_order_result: string | null;
+  lab_items_normal_value_ref: string | null;
 }
 
 export interface LabCategory {
