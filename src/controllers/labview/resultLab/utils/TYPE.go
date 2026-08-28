@@ -14,8 +14,9 @@ type LabResultItem struct {
 }
 
 type LabItem struct {
-	LabItemName string  `json:"lab_items_name"`
-	LabResult   *string `json:"lab_order_result"`
+	LabItemName    string  `json:"lab_items_name"`
+	LabResult      *string `json:"lab_order_result"`
+	NormalValueRef *string `json:"lab_items_normal_value_ref"`
 }
 
 type LabCategory struct {

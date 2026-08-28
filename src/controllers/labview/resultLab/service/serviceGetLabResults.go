@@ -19,7 +19,8 @@ func GetLabResults(cid string, startDate, endDate time.Time) ([]resultLabUtils.L
 			TO_CHAR(lh.order_date, 'YYYY-MM-DD') AS order_date,
 			COALESCE(lg.lab_items_group_name, 'อื่น ๆ') AS group_name,
 			li.lab_items_name,
-			lr.lab_order_result
+			lr.lab_order_result,
+			lr.lab_items_normal_value_ref
 		FROM lab_head lh
 		LEFT JOIN patient pt ON pt.hn = lh.hn
 		LEFT JOIN lab_order lr ON lr.lab_order_number = lh.lab_order_number
@@ -50,9 +51,9 @@ func GetLabResults(cid string, startDate, endDate time.Time) ([]resultLabUtils.L
 
 	for rows.Next() {
 		var ptName, orderDate, groupName, labItemName string
-		var labResult *string
+		var labResult, normalValueRef *string
 
-		if err := rows.Scan(&ptName, &orderDate, &groupName, &labItemName, &labResult); err != nil {
+		if err := rows.Scan(&ptName, &orderDate, &groupName, &labItemName, &labResult, &normalValueRef); err != nil {
 			log.Printf("❌ Scan error: %v", err)
 			return nil, err
 		}
@@ -81,8 +82,9 @@ func GetLabResults(cid string, startDate, endDate time.Time) ([]resultLabUtils.L
 		}
 
 		grouped[dateIdx].Groups[catIdx].Items = append(grouped[dateIdx].Groups[catIdx].Items, resultLabUtils.LabItem{
-			LabItemName: labItemName,
-			LabResult:   labResult,
+			LabItemName:    labItemName,
+			LabResult:      labResult,
+			NormalValueRef: normalValueRef,
 		})
 	}
 
