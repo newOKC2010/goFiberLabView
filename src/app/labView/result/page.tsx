@@ -9,6 +9,7 @@ import { LabResultResponse, LabGroupedResult, LabCategory } from '@/app/labView/
 import { showToast } from '@/global/globalSwal';
 import { formatThaiDate } from '@/components/dataPicker/handler/datePickerHandlers';
 import PrintReport from '@/app/labView/result/components/PrintReport';
+import PrintSticker from '@/app/labView/result/components/PrintSticker';
 
 export default function ResultPage() {
   const today = new Date().toISOString().split('T')[0];
@@ -20,6 +21,7 @@ export default function ResultPage() {
   const [searched, setSearched] = useState(false);
   const [openDates, setOpenDates] = useState<string[]>([]);
   const [isPrintOpen, setIsPrintOpen] = useState(false);
+  const [isStickerOpen, setIsStickerOpen] = useState(false);
 
   const toggleDate = (date: string) => {
     setOpenDates(prev =>
@@ -34,6 +36,7 @@ export default function ResultPage() {
     setResult(null);
     setSearched(false);
     setOpenDates([]);
+    setIsStickerOpen(false);
   };
 
   const handleSearch = async () => {
@@ -68,6 +71,14 @@ export default function ResultPage() {
           endDate={endDate}
           results={result.results}
           onClose={() => setIsPrintOpen(false)}
+        />
+      )}
+
+      {isStickerOpen && result && (
+        <PrintSticker
+          ptName={result.pt_name}
+          results={result.results}
+          onClose={() => setIsStickerOpen(false)}
         />
       )}
 
@@ -150,13 +161,22 @@ export default function ResultPage() {
                 <p className="text-xl font-bold text-blue-600">{result.total}</p>
               </div>
               {result.results.length > 0 && (
-                <button
-                  onClick={() => setIsPrintOpen(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'wght' 700" }}>print</span>
-                  พิมพ์รายงาน
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setIsStickerOpen(true)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-bold rounded-xl transition cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'wght' 700" }}>label</span>
+                    Print Sticker
+                  </button>
+                  <button
+                    onClick={() => setIsPrintOpen(true)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'wght' 700" }}>print</span>
+                    พิมพ์รายงาน
+                  </button>
+                </div>
               )}
             </div>
           </div>
